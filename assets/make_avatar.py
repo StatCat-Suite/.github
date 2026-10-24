@@ -2,6 +2,7 @@
 
     python make_avatar.py style statcat-suite-avatar.svg   # the logo
     python make_avatar.py block blocking.svg               # flat layout, no styling
+    python make_avatar.py favicon favicon.svg              # the head alone, for the docs sites' favicon
 
 Render the PNG avatar with resvg, which draws strokes and gradients correctly:
 
@@ -29,7 +30,8 @@ WHITE = "#eff1f5"  # Latte Base
 PINK = "#f5c2e7"
 BOOKS = ["#fab387", "#f38ba8", "#f9e2af", "#a6e3a1", "#94e2d5"]
 
-STYLE = sys.argv[1] == "style"
+FAVICON = sys.argv[1] == "favicon"  # the head alone, on a rounded square
+STYLE = sys.argv[1] in ("style", "favicon")
 
 # Head: centre and scale, relative to the r=96 head the shapes were drawn at.
 HX, HY, S = (178, 196, 1.25) if STYLE else (178, 194, 1.3125)
@@ -102,6 +104,8 @@ if STYLE:
 else:
     add(f'<rect width="512" height="512" fill="{LAVENDER}"/>')
 
+body_start = len(out)
+
 # Sea-serpent body: neck, one hump, then the tail runs under the books as their shelf.
 BODY = ("M166 300 C150 372 52 372 62 438 C72 492 168 494 190 456 C204 432 236 430 252 450 "
         "C266 470 276 476 300 476 L466 476")
@@ -167,6 +171,8 @@ if STYLE:
         add(f'<circle cx="{cx}" cy="{base - 4 - gauss(cx) * (PEAK + lift) / PEAK:.1f}" r="5.5" fill="{CRUST}"/>')
 else:
     add(f'<path d="{curve}" stroke="{CRUST}" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="1 10"/>')
+
+body_end = len(out)
 
 # Head
 TILT = 8 if STYLE else 0  # leans toward the data
@@ -241,4 +247,11 @@ else:
 
 add("</g>")
 add("</svg>")
+
+if FAVICON:
+    del out[body_start:body_end]
+    FX, FY, FW = 10, -16, 362  # the tilted head spans x 37-346, y 0-330; 16 px of padding
+    out[0] = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{FX} {FY} {FW} {FW}" width="64" height="64">'
+    i = out.index('<rect width="512" height="512" fill="url(#bg)"/>')
+    out[i] = f'<rect x="{FX}" y="{FY}" width="{FW}" height="{FW}" rx="72" fill="url(#bg)"/>'
 open(sys.argv[2], "w").write("\n".join(out))
