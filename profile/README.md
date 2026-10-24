@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://github.com/StatCat-Suite/.github/raw/main/assets/statcat-suite-avatar.png" width="180"
+       alt="The StatCat Suite logo: a black cat with a sea-serpent body, wearing glasses made of two diamonds with exchange arrows, beside a stack of books shaped like a bell curve">
+</p>
+
 ## StatCat Suite
 
 Python libraries for statistical and open data catalogs. The suite reads SDMX
